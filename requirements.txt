@@ -1,0 +1,9 @@
+djangorestframework
+django-crispy-forms
+django-heroku
+gunicorn
+psycopg2
+requests
+django
+bs4
+jwt
