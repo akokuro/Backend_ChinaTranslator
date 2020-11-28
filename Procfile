@@ -1,0 +1,1 @@
+web: gunicorn Backend_ChinaTranslator.wsgi
