@@ -6,4 +6,4 @@ psycopg2
 requests
 django
 bs4
-jwt
+pyjwt
