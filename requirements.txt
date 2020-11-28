@@ -7,3 +7,4 @@ requests
 django
 bs4
 pyjwt
+lxml
