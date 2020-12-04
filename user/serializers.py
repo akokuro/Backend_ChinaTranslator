@@ -23,9 +23,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
     )
 
-    username = serializers.CharField(
-        max_length=30,
-        min_length=6,
+    mail = serializers.CharField(
+        max_length=255,
+        min_length=5,
         write_only=True,
     )
 
@@ -35,7 +35,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ('username', 'password', 'token',)
+        fields = ('mail', 'username', 'password', 'token',)
 
     def create(self, validated_data):
         return MyUser.objects.create_user(**validated_data)
@@ -46,7 +46,7 @@ class LoginSerializer(serializers.Serializer):
     Email and password are required.
     Returns a JSON web token.
     """
-    username = serializers.CharField(max_length=30,write_only=True)
+    mail = serializers.CharField(max_length=255,write_only=True)
     password = serializers.CharField(max_length=12, write_only=True)
 
     # Ignore these fields if they are included in the request.
@@ -56,12 +56,12 @@ class LoginSerializer(serializers.Serializer):
         """
         Validates user data.
         """
-        username = data.get('username', None)
+        mail = data.get('mail', None)
         password = data.get('password', None)
 
-        if username is None:
+        if mail is None:
             raise serializers.ValidationError(
-                'An username is required to log in.'
+                'A mail is required to log in.'
             )
 
         if password is None:
@@ -69,11 +69,11 @@ class LoginSerializer(serializers.Serializer):
                 'A password is required to log in.'
             )
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(mail=mail, password=password)
 
         if user is None:
             raise serializers.ValidationError(
-                'A user with this username and password was not found.'
+                'A user with this mail and password was not found.'
             )
 
         if not user.is_active:
@@ -86,5 +86,5 @@ class LoginSerializer(serializers.Serializer):
         }
 
 class ViewUserSerializer(serializers.Serializer):
-    id = serializers.IntegerField( read_only=True)
-    username = serializers.CharField(max_length=30, read_only=True)
+    id = serializers.IntegerField(read_only=True)
+    mail = serializers.CharField(max_length=30, read_only=True)

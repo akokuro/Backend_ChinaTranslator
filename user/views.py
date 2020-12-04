@@ -32,10 +32,10 @@ class RegistrationAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = RegistrationSerializer
 
-    def register_user(self, username, password):
+    def register_user(self, mail, username, password):
         """Регистрация пользователя с именем username и паролем password
         Возвращает сериализатор пользователя"""
-        user = {"username": username, "password": password}
+        user = {"mail": mail, "username": username, "password": password}
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -43,32 +43,18 @@ class RegistrationAPIView(APIView):
 
     def post(self, request):
         """Обработка post-запроса 
-        Если передан параметр thinkforme=True, то генерирует имя пользователя и пароль и возвращает их в json вместе с токеном
-        Иначе регистрирует пользователя из данных полученного json и вохвращает в json токен
+        Регистрирует пользователя из данных полученного json и вохвращает в json токен
         """
-        if "thinkforme" in request.query_params and request.query_params["thinkforme"] == "true":
-            username = MyUser.objects.make_random_username()
-            password = MyUser.objects.make_random_password()
-            serializer = self.register_user(username, password)
-            response = Response(
-                {"username": username,
-                 "password": password,
-                 "token": serializer.data.get("token", None),
-                 },
-                status=status.HTTP_201_CREATED,
-            )
-            response.set_cookie("Token", serializer.data.get("token", None))
-            return response
-        else:
-            serializer = self.register_user(request.data.get("username"), request.data.get("password"))
-            response = Response(
-                {
-                    'token': serializer.data.get('token', None),
-                },
-                status=status.HTTP_201_CREATED,
-            )
-            response.set_cookie("Token", serializer.data.get("token", None))
-            return response
+        serializer = self.register_user(request.data.get("mail"), request.data.get("username"),
+                                        request.data.get("password"))
+        response = Response(
+            {
+                'token': serializer.data.get('token', None),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+        response.set_cookie("Token", serializer.data.get("token", None))
+        return response
 
 
 class LoginAPIView(APIView):

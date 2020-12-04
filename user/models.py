@@ -8,7 +8,6 @@ from .namegenerator import NameGeneration
 from datetime import datetime
 from datetime import timedelta
 from django.conf import settings
-from django.core import validators
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -26,24 +25,24 @@ class UserManager(BaseUserManager):
     для создания объектов `User`.
     """
 
-    def _create_user(self, username, password=None, **extra_fields):
-        if not username:
-            raise ValueError('Имя пользователя должно быть установлено')
+    def _create_user(self, mail, username=None, password=None, **extra_fields):
+        if not mail:
+            raise ValueError('Почта пользователя должно быть установлено')
 
-        user = self.model(username=username, **extra_fields)
+        user = self.model(mail=mail, username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
-    def create_user(self, username, password=None, **extra_fields):
+    def create_user(self, mail, username, password=None, **extra_fields):
         """
         Создает и возвращает `User` с именем пользователя и паролем.
         """
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
 
-        return self._create_user(username, password, **extra_fields)
+        return self._create_user(mail, username, password, **extra_fields)
 
     def create_superuser(self, username, password, **extra_fields):
         """
@@ -84,14 +83,16 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     Требуется имя пользователя и пароль.
     """
 
-    username = models.CharField(db_index=True, max_length=255, unique=True)
+    username = models.CharField(db_index=True, max_length=30)
+
+    mail = models.EmailField(max_length=255, unique=True)
 
     is_staff = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
 
     # Свойство `USERNAME_FIELD` сообщает нам, какое поле мы будем использовать для входа.
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'mail'
 
     REQUIRED_FIELDS = ()
 
@@ -104,7 +105,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         Возвращает строковое представление этого `User`.
         Эта строка используется, когда в консоли выводится `User`.
         """
-        return self.username
+        return self.mail
 
     @property
     def token(self):
