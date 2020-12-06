@@ -1,5 +1,6 @@
 djangorestframework
 django-crispy-forms
+django-cors-headers
 django-heroku
 gunicorn
 psycopg2
