@@ -158,9 +158,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'user.MyUser'
 
 CORS_ALLOWED_ORIGINS = [
-    "https://murahika.github.io/log-in.component.html",
-    "https://murahika.github.io/sign-up.component.html",
-    "https://murahika.github.io/translate.component.html"
+    "https://murahika.github.io"
 ]
 
 django_heroku.settings(locals())
