@@ -17,11 +17,11 @@ def custom_exception_handler(exc, context):
     Если  IntegrityError(попытка регистрации под существующим username), возвращает 403
     Если ValidationError(неудачная попытка логина), возвращает 401"""
     if isinstance(exc, NotAuthenticated):
-        return Response("", status=status.HTTP_401_UNAUTHORIZED)
+        return Response(str(exc), status=status.HTTP_401_UNAUTHORIZED)
     if isinstance(exc, IntegrityError):
-        return Response("", status=status.HTTP_403_FORBIDDEN)
+        return Response(str(exc), status=status.HTTP_403_FORBIDDEN)
     if isinstance(exc, ValidationError):
-        return Response("", status=status.HTTP_401_UNAUTHORIZED)
+        return Response(str(exc), status=status.HTTP_401_UNAUTHORIZED)
     response = exception_handler(exc, context)
     return response
 

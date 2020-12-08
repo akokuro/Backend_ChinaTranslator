@@ -2,15 +2,7 @@ from rest_framework.test import APITestCase as TestCase
 
 # Create your tests here.
 
-from django.core.exceptions import ValidationError
-
 from .serializers import RegistrationSerializer
-from pymysql.err import IntegrityError
-from .models import MyUser as User
-from http.cookies import SimpleCookie
-from django.urls import reverse
-
-import json
 
 class UserListViewTest(TestCase):
 
@@ -74,8 +66,3 @@ class UserListViewTest(TestCase):
         # Пароль состоит не только из английский букв и цифр
         resp = self.signup('Username10', 'password!')
         self.assertEqual(resp.status_code, 401)
-            
-    def test_signup_authogenerate_credentials(self):
-        """Тестирование регистрации автосгенерированного пользователя"""
-        resp = self.client.post('/register/?thinkforme=true') 
-        self.assertEqual(resp.status_code, 201)

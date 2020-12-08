@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
+from user.backends import JWTAuthentication
+
 import string
 import requests
 from bs4 import BeautifulSoup
@@ -10,6 +12,7 @@ from bs4 import BeautifulSoup
 
 class ParserAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request):
         try:
