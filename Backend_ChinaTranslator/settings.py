@@ -158,12 +158,10 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'user.MyUser'
 
-CORS_ALLOWED_ORIGINS = [
-    "https://murahika.github.io"
-]
-
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'Access-Control-Allow-Credentials: true',
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    "https://smurahika.github.io"
 ]
 
 django_heroku.settings(locals())
