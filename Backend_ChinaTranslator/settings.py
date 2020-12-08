@@ -163,8 +163,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'Access-Control-Allow-Headers',
-    'Access-Control-Allow-Credentials',
+    'Access-Control-Allow-Credentials: true',
 ]
 
 django_heroku.settings(locals())
