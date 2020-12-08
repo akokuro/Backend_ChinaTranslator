@@ -13,7 +13,7 @@ from .serializers import RegistrationSerializer
 
 def custom_exception_handler(exc, context):
     """Реагирует на исключение
-    Если исключение NotAuthenticated(неавторизованный запрос на hello), возвращает 401
+    Если исключение NotAuthenticated(неавторизованный запрос), возвращает 401
     Если  IntegrityError(попытка регистрации под существующим username), возвращает 403
     Если ValidationError(неудачная попытка логина), возвращает 401"""
     if isinstance(exc, NotAuthenticated):
