@@ -161,7 +161,7 @@ AUTH_USER_MODEL = 'user.MyUser'
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
-    "https://smurahika.github.io"
+    "https://murahika.github.io"
 ]
 
 django_heroku.settings(locals())
