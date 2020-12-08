@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from corsheaders.defaults import default_headers
 from pathlib import Path
 import django_heroku
 import sys
@@ -159,6 +160,11 @@ AUTH_USER_MODEL = 'user.MyUser'
 
 CORS_ALLOWED_ORIGINS = [
     "https://murahika.github.io"
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Credentials',
 ]
 
 django_heroku.settings(locals())
