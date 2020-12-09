@@ -1,9 +1,6 @@
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
-
-from user.backends import JWTAuthentication
 
 import string
 import requests
@@ -11,14 +8,9 @@ from bs4 import BeautifulSoup
 
 
 class ParserAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if not JWTAuthentication().authenticate(request):
-            return Response(
-                "Пользователь не авторизован",
-                401
-            )
         try:
             bkrs = request.query_params["bkrs"]
             if bkrs == "True":
