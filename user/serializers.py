@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from .models import MyUser
+import re
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     """
@@ -8,14 +10,16 @@ class RegistrationSerializer(serializers.ModelSerializer):
     Email, username, and password are required.
     Returns a JSON web token.
     """
+
     def validate(self, data):
         """
         Check that the start is before the stop.
         """
-        if not data['username'].isalnum() or not data['password'].isalnum():
-            raise serializers.ValidationError("Password or username incorrect")
+        if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).*$", data['password']):
+            raise serializers.ValidationError("Password incorrect")
+
         return data
-    
+
     # The password must be validated and should not be read by the client
     password = serializers.CharField(
         max_length=12,
@@ -40,13 +44,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return MyUser.objects.create_user(**validated_data)
 
+
 class LoginSerializer(serializers.Serializer):
     """
     Authenticates an existing user.
     Email and password are required.
     Returns a JSON web token.
     """
-    mail = serializers.CharField(max_length=255,write_only=True)
+    mail = serializers.CharField(max_length=255, write_only=True)
     password = serializers.CharField(max_length=12, write_only=True)
 
     # Ignore these fields if they are included in the request.
@@ -84,6 +89,7 @@ class LoginSerializer(serializers.Serializer):
         return {
             'token': user.token,
         }
+
 
 class ViewUserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)

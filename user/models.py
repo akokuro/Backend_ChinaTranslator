@@ -1,14 +1,9 @@
 from django.db import models
 
-# Create your models here.
-
 import jwt
-import random 
-from .namegenerator import NameGeneration
 from datetime import datetime
 from datetime import timedelta
 from django.conf import settings
-from django.utils.crypto import get_random_string
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
@@ -59,18 +54,6 @@ class UserManager(BaseUserManager):
             raise ValueError('Суперпользователь должен иметь is_superuser=True.')
 
         return self._create_user(username, password, **extra_fields)
-
-    def make_random_username(self):
-        """Создаёт случайное имя пользователя"""
-        username = NameGeneration.gen()
-        try:
-            self.get(username=username)
-        except Exception: 
-            return username
-        return username + random.randint(0, 999)
-
-    def make_random_password(self):
-        return get_random_string(12)
 
     def get_user_from_token(self, token):
         _id = jwt.decode(token)

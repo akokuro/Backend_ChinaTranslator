@@ -74,7 +74,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
     def get_token_from_cookie(self, request):
         """
-        Пытается получить токен из кук, возвращает токен или None
+        Пытается получить токен из куки, возвращает токен или None
         """
         token = None
         if self.authentication_header_prefix in request.COOKIES:
@@ -86,24 +86,19 @@ class JWTAuthentication(authentication.BaseAuthentication):
         Try to authenticate the given credentials. If authentication is
         successful, return the user and token. If not, throw an error.
         """
-        print(token)
         try:
             payload = jwt.decode(token, settings.SECRET_KEY)
         except:
             msg = 'Invalid authentication. Could not decode token.'
-            print(msg)
             raise exceptions.AuthenticationFailed(msg)
 
         try:
             user = MyUser.objects.get(pk=payload['id'])
         except MyUser.DoesNotExist:
             msg = 'No user matching this token was found.'
-            print(msg)
             raise exceptions.AuthenticationFailed(msg)
 
         if not user.is_active:
             msg = 'This user has been deactivated.'
-            print(msg)
             raise exceptions.AuthenticationFailed(msg)
-        print("ok")
         return (user, token)
