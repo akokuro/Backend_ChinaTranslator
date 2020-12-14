@@ -7,6 +7,7 @@ from rest_framework.exceptions import NotAuthenticated, ValidationError
 from django.db.utils import IntegrityError
 
 from .models import MyUser
+from .backends import JWTAuthentication
 from .serializers import LoginSerializer
 from .serializers import RegistrationSerializer
 
@@ -15,13 +16,13 @@ def custom_exception_handler(exc, context):
     """Реагирует на исключение
     Если исключение NotAuthenticated(неавторизованный запрос), возвращает 401
     Если  IntegrityError(попытка регистрации под существующим username), возвращает 403
-    Если ValidationError(неудачная попытка логина), возвращает 401"""
+    Если ValidationError(неудачная попытка логина), возвращает 403"""
     if isinstance(exc, NotAuthenticated):
         return Response(str(exc), status=status.HTTP_401_UNAUTHORIZED)
     if isinstance(exc, IntegrityError):
         return Response(str(exc), status=status.HTTP_403_FORBIDDEN)
     if isinstance(exc, ValidationError):
-        return Response(str(exc), status=status.HTTP_401_UNAUTHORIZED)
+        return Response(str(exc), status=status.HTTP_403_FORBIDDEN)
     response = exception_handler(exc, context)
     return response
 
@@ -73,3 +74,13 @@ class LoginAPIView(APIView):
         response = Response(serializer.data, status=status.HTTP_200_OK)
         response.set_cookie("Token", serializer.data.get("token", None))
         return response
+
+class GetUserNameAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Обработка post-запроса
+        Проверяет наличие пользователя с переданными в json данными
+        Если такой пользователь сущетсвует, то возвращает json с токеном"""
+        user, _ = JWTAuthentication().authenticate(request)
+        return Response(user.username, 200)

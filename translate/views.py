@@ -40,6 +40,13 @@ class ParserAPIView(APIView):
                 "В запрсое не передан text",
                 400
             )
+
+        if len(text) > 100:
+            return Response(
+                "Длина текста превышает допустимую",
+                400
+            )
+
         if not check_language_chinese(text):
             return Response(
                 "Введите текст на китайском языке",
@@ -80,6 +87,8 @@ class Parser:
         if bkrs:
             self.result["bkrs"] = self.parser_bkrs()
         if zhonga:
+            if len(text) > 24:
+                self.result["zhonga"] = "Длина текста превышает допустимую"
             self.result["zhonga"] = self.parser_zhonga()
 
     def parser_bkrs(self):

@@ -45,7 +45,7 @@ class UserListViewTest(TestCase):
     def test_incorrect_login(self):
         """Тестирование автризации несуществущего пользователя"""
         resp = self.login('Username7@mail.ru', 'Password7')
-        self.assertEqual(resp.status_code, 401)
+        self.assertEqual(resp.status_code, 403)
 
     def test_signup_with_exists_username(self):
         """Тестирование регистрации существующего пользователя"""
@@ -57,10 +57,17 @@ class UserListViewTest(TestCase):
         self.client.raise_request_exception = True
         # Пароль больше 12 символов
         resp = self.signup('Username7@mail.ru', 'Username7', 'Password638753893101')
-        self.assertEqual(resp.status_code, 401)
+        self.assertEqual(resp.status_code, 403)
         # Пароль меньше 6 символов
         resp = self.signup('Username41@mail.ru', 'Username7', 'Pass')
-        self.assertEqual(resp.status_code, 401)
-        # Пароль состоит не только из английских букв и цифр
-        resp = self.signup('Username7@mail.ru', 'Username7', 'Password6!')
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 403)
+        # Пароль состоит не только из строчных букв и цифр
+        resp = self.signup('Username7@mail.ru', 'Username7', 'password6')
+        self.assertEqual(resp.status_code, 403)
+        # Пароль состоит не только из цифр
+        resp = self.signup('Username7@mail.ru', 'Username7', '12345678')
+        self.assertEqual(resp.status_code, 403)
+        # Пароль состоит не только из букв
+        resp = self.signup('Username7@mail.ru', 'Username7', 'Password')
+        self.assertEqual(resp.status_code, 403)
+
