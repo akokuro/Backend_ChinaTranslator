@@ -46,6 +46,11 @@ class ParserAPIView(APIView):
                 "Длина текста превышает допустимую",
                 400
             )
+        elif len(text) < 1:
+            return Response(
+                "Поле текста не заполнено",
+                400
+            )
 
         if not check_language_chinese(text):
             return Response(
@@ -87,13 +92,9 @@ class Parser:
         if bkrs:
             self.result["bkrs"] = self.parser_bkrs()
         if zhonga:
-            if len(text) > 24:
-                self.result["zhonga"] = "Длина текста превышает допустимую"
             self.result["zhonga"] = self.parser_zhonga()
 
     def parser_bkrs(self):
-        if len(self.text)  > 100:
-           return None
         link = Parser.url["bkrs"] + self.text
         response = requests.get(link)
         soup = BeautifulSoup(response.content, "lxml")
@@ -133,7 +134,7 @@ class Parser:
 
     def parser_zhonga(self):
         if len(self.text) > 24:
-            return None
+            return "Длина текста превышает допустимую"
         link = Parser.url["zhonga"] + self.text
         response = requests.get(link)
         original_strings = []
