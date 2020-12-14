@@ -147,8 +147,14 @@ class Parser:
             for string in tables:
                 original_strings.append([string.find("div", {"class": "segmented-unit-value"}).a.text])
                 pinyin_strings.append([string.find("span", {"class": "pinyin"}).text.strip()])
-                translated_strings.append(
-                    [string.find("div", {"class": "segmented-unit-dic-definitions"}).text.strip()])
+                try:
+                    translate = string.find("div", {"class": "segmented-unit-dic-definitions"}).text.strip()
+                    if string.find("div", {"class": "segmented-unit-user-definitions"}):
+                        translate += string.find("div", {"class": "segmented-unit-user-definitions"}).text.strip()
+                except Exception as ex:
+                    translate = string.find("div", {"class": "segmented-unit-user-definitions"}).text.strip()
+                    print(str(ex))
+                translated_strings.append([translate])
             for original, pinyin, translated in zip(original_strings, pinyin_strings, translated_strings):
                 result.append([original, pinyin, translated])
         else:
