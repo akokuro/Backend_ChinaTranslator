@@ -115,3 +115,15 @@ class TranslateListViewTest(TestCase):
         resp = self.translate(
             "", "True", "True")
         self.assertEqual(resp.status_code, 400)
+
+    def test_authenticate_translate_text_bkrs(self):
+        """Тестирование запроса на перевод авторизованным пользователем в bkrs с проверкой текстаы"""
+        resp = self.login('Username@mail.ru', 'Password1')
+        resp = self.translate("哪儿")
+        self.assertEqual(resp.json()['bkrs'], [['哪儿'], ['nǎr'], ['разг. где?, куда? (вм. 哪里 кроме 5)']])
+
+    def test_authenticate_translate_text_zhonga(self):
+        """Тестирование запроса на перевод авторизованным пользователем в zhonga с проверкой текстаы"""
+        resp = self.login('Username@mail.ru', 'Password1')
+        resp = self.translate("哪儿", "False", "True")
+        self.assertEqual(resp.json()['zhonga'], [['哪儿'], ['nǎr'], ['где?, куда? \n\n\nсм. 哪里  \n\n\nгде? где уж там! (вопр)']])

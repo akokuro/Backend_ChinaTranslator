@@ -8,9 +8,15 @@ from bs4 import BeautifulSoup
 
 
 class ParserAPIView(APIView):
+    """Перевод текста
+    Доступен авторизованным пользователям"""
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        """Обработка post-запроса
+        Отправляет запрос на перевод в словари, в случае успеха возвращает полученный результат
+        Если отстутствуют параметры bkrs и zhonga в query_params возвращает ошибку со статусом 400
+        Если поле текста в json отсутствует или его значение некорреткно, возвращает ошибку со статусом 400"""
         try:
             bkrs = request.query_params["bkrs"]
             if bkrs == "True":
@@ -63,6 +69,8 @@ class ParserAPIView(APIView):
 
 
 def check_language_chinese(text: str):
+    """Проверка строки на то, что она написана на китайском языке
+    Знаки пунктуации, числа и пробельные символы на проверку не влияют"""
     punctuation_marks = string.punctuation + string.whitespace + '。［］【】﹁﹂『』「」﹁﹂………、‧《》〈〉﹏—～，1234567890'
     for char in text:
         if u'\u2E80' <= char <= u'\u2FD5':
@@ -83,6 +91,7 @@ def check_language_chinese(text: str):
 
 
 class Parser:
+    """Парсер словарей"""
     url = {"bkrs": "https://bkrs.info/slovo.php?ch=", "zhonga": "https://www.zhonga.ru/search?q="}
     result = {}
 
@@ -95,6 +104,7 @@ class Parser:
             self.result["zhonga"] = self.parser_zhonga()
 
     def parser_bkrs(self):
+        """Парсит словарь bkrs"""
         link = Parser.url["bkrs"] + self.text
         response = requests.get(link)
         soup = BeautifulSoup(response.content, "lxml")
@@ -133,6 +143,7 @@ class Parser:
         return result
 
     def parser_zhonga(self):
+        """Парсит словарь zhonga"""
         if len(self.text) > 24:
             return "Длина текста превышает допустимую"
         link = Parser.url["zhonga"] + self.text

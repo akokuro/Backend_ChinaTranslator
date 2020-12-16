@@ -66,9 +66,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     Требуется имя пользователя и пароль.
     """
 
-    username = models.CharField(db_index=True, max_length=30)
+    username = models.CharField(max_length=30)
 
-    mail = models.EmailField(max_length=255, unique=True)
+    mail = models.EmailField(db_index=True, max_length=255, unique=True)
 
     is_staff = models.BooleanField(default=False)
 

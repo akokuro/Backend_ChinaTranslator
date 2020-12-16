@@ -83,4 +83,4 @@ class GetUserNameAPIView(APIView):
         Проверяет наличие пользователя с переданными в json данными
         Если такой пользователь сущетсвует, то возвращает json с токеном"""
         user, _ = JWTAuthentication().authenticate(request)
-        return Response(user.username, 200)
+        return Response(user.username, status=status.HTTP_200_OK)
